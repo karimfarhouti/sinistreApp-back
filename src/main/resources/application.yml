@@ -20,4 +20,4 @@ server:
 
 logging:
   level:
-    com.avidea: INFO
+    com.avidea.sinistreapp: INFO

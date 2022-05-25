@@ -8,6 +8,10 @@ spring:
       pool-name: HikariCP
       auto-commit: false
 
+  jackson:
+    serialization:
+      indent-output: true
+
   jpa:
     open-in-view: false
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -15,8 +19,21 @@ spring:
       ddl-auto: create
     show-sql: true
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 100MB
+
 server:
   port: 8080
+
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: claim
+  port: 9000
+  secure: false
 
 logging:
   level:

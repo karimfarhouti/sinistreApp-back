@@ -1,5 +1,7 @@
 package com.avidea.sinistreapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -21,11 +23,12 @@ public class Contract {
     @Column(name = "assured_name", nullable = false)
     private String assuredName;
 
-    @Column(name = "vehicle_immatriculation", nullable = false)
-    private Long vehicleImmatriculation;
+    @Column(name = "vehicle_immat", nullable = false)
+    private Long vehicleImmat;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "claim_number", referencedColumnName = "number")
+    @JsonIgnore
     private Claim claim;
 
     public Long getNumber() { return number; }
@@ -44,9 +47,9 @@ public class Contract {
 
     public void setAssuredName(String assuredName) { this.assuredName = assuredName; }
 
-    public Long getVehicleImmatriculation() { return vehicleImmatriculation; }
+    public Long getVehicleImmatriculation() { return vehicleImmat; }
 
-    public void setVehicleImmatriculation(Long vehicleImmatriculation) { this.vehicleImmatriculation = vehicleImmatriculation; }
+    public void setVehicleImmat(Long vehicleImmat) { this.vehicleImmat = vehicleImmat; }
 
     public Claim getClaim() { return claim; }
 

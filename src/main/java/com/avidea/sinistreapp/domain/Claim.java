@@ -24,7 +24,7 @@ public class Claim {
     @Column(name = "status", nullable = false)
     private ClaimStatus status;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url")
     private String imageUrl;
 
     @OneToOne(mappedBy = "claim"

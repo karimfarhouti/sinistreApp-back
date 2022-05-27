@@ -28,7 +28,7 @@ public class FileStorageResource {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadClaimImage(@RequestParam("claimNumber") long claimNumber,
+    public ResponseEntity<String> uploadClaimImage(@RequestParam("claimId") long claimId,
                                                    @RequestParam("claimImage") MultipartFile file) {
         String fileName = file.getOriginalFilename();
         if (fileName == null || fileName.isEmpty())
@@ -39,9 +39,9 @@ public class FileStorageResource {
             throw new EmptyFileException("File can't be empty");
         try {
             final String imageUrl = fileUploadService.uploadFile(file);
-            Optional<Claim> maybeClaim = claimRepository.findById(claimNumber);
+            Optional<Claim> maybeClaim = claimRepository.findById(claimId);
             if (!maybeClaim.isPresent())
-                throw new ClaimNotFoundException("Claim with number " + claimNumber + " does not exist");
+                throw new ClaimNotFoundException("Claim with number " + claimId + " does not exist");
             Claim claim = maybeClaim.get();
             claim.setImageUrl(imageUrl);
             claimRepository.save(claim);

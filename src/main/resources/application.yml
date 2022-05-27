@@ -37,4 +37,4 @@ minio:
 
 logging:
   level:
-    com.avidea.sinistreapp: INFO
+    com.avidea.sinistreapp: DEBUG

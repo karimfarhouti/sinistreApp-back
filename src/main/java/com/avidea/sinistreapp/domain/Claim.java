@@ -11,7 +11,11 @@ import java.util.Objects;
 public class Claim {
 
     @Id
-    @Column(name = "number")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "myGenerator")
+    @SequenceGenerator(name = "myGenerator", sequenceName = "mySequence")
+    private Long id;
+
+    @Column(name = "number",unique = true)
     private Long number;
 
     @Column(name = "accident_date", nullable = false)
@@ -30,6 +34,10 @@ public class Claim {
     @OneToOne(mappedBy = "claim"
             , cascade = CascadeType.ALL)
     private Contract contract;
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public Long getNumber() { return number; }
 
@@ -60,11 +68,9 @@ public class Claim {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Claim claim = (Claim) o;
-        return number.equals(claim.number);
+        return id != null && id.equals(claim.id);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(number);
-    }
+    public int hashCode() { return 31; }
 }

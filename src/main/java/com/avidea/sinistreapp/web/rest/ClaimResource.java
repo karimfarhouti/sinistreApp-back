@@ -7,6 +7,7 @@ import com.avidea.sinistreapp.repositories.ClaimRepository;
 import com.avidea.sinistreapp.repositories.ContractRepository;
 import com.avidea.sinistreapp.services.dtos.ClaimDTO;
 import com.avidea.sinistreapp.services.mapper.ClaimMapper;
+import com.avidea.sinistreapp.web.rest.exceptions.ClaimNotFoundException;
 import com.avidea.sinistreapp.web.rest.exceptions.ClaimNumberAlreadyExistsException;
 import com.avidea.sinistreapp.web.rest.exceptions.ContractNumberAlreadyExistsException;
 import org.slf4j.Logger;
@@ -15,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -41,7 +44,7 @@ public class ClaimResource {
 
         final Long claimNumber = claimDTO.getClaimNumber();
 
-        log.debug("claim number: {}",claimNumber);
+        log.debug("claim number: {}", claimNumber);
 
         final Optional<Claim> maybeClaim = claimRepository.findById(claimNumber);
         if (maybeClaim.isPresent())
@@ -51,8 +54,35 @@ public class ClaimResource {
         if (maybeContract.isPresent())
             throw new ContractNumberAlreadyExistsException("Contract with number " + contractNumber + " already exists");
 
-        Claim claim = claimRepository.save(claimMapper.toEntity(claimDTO));
+        final Claim claim = claimRepository.save(claimMapper.toEntity(claimDTO));
 
         return ResponseEntity.created(URI.create(ApplicationConstants.APPLICATION + "/api/claims")).body(claim);
+    }
+
+    @PutMapping("/claims")
+    public ResponseEntity<Claim> updateClaim(@Valid @RequestBody ClaimDTO claimDTO) {
+        log.debug("ClaimDTO object received: {}", claimDTO);
+        final Claim claim = claimRepository.save(claimMapper.toEntity(claimDTO));
+        return ResponseEntity.ok().body(claim);
+    }
+
+    @DeleteMapping("/claims/{claimId}")
+    public ResponseEntity<Void> deleteClaim(@NotNull @PathVariable Long claimId) {
+        final Optional<Claim> maybeClaim = claimRepository.findById(claimId);
+        if (!maybeClaim.isPresent())
+            throw new ClaimNotFoundException("Claim with id: " + claimId + " was not found");
+        claimRepository.delete(maybeClaim.get());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/claims")
+    public List<Claim> getAll() {
+        return claimRepository.findAll();
+    }
+
+    @GetMapping("/claim/{claimId}")
+    public ResponseEntity<Claim> getByNumber(@NotNull @PathVariable Long claimId) {
+        final Optional<Claim> maybeClaim = claimRepository.findById(claimId);
+        return maybeClaim.map(claim -> ResponseEntity.ok().body(claim)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

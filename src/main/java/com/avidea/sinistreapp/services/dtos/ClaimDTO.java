@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 public class ClaimDTO {
 
+    private Long claimId;
     @NotNull
     private Long claimNumber;
 
@@ -22,6 +23,7 @@ public class ClaimDTO {
     @NotNull
     private ClaimStatus claimStatus;
 
+    private Long contractId;
     @NotNull
     private Long contractNumber;
 
@@ -41,6 +43,10 @@ public class ClaimDTO {
     @NotEmpty
     private Long contractVehicleImmat;
 
+    public Long getClaimId() { return claimId; }
+
+    public void setClaimId(Long claimId) { this.claimId = claimId; }
+
     public Long getClaimNumber() { return claimNumber; }
 
     public void setClaimNumber(Long claimNumber) { this.claimNumber = claimNumber; }
@@ -56,6 +62,10 @@ public class ClaimDTO {
     public ClaimStatus getClaimStatus() { return claimStatus; }
 
     public void setClaimStatus(ClaimStatus claimStatus) { this.claimStatus = claimStatus; }
+
+    public Long getContractId() { return contractId; }
+
+    public void setContractId(Long contractId) { this.contractId = contractId; }
 
     public Long getContractNumber() { return contractNumber; }
 
@@ -76,4 +86,21 @@ public class ClaimDTO {
     public Long getContractVehicleImmat() { return contractVehicleImmat; }
 
     public void setContractVehicleImmat(Long contractVehicleImmat) { this.contractVehicleImmat = contractVehicleImmat; }
+
+    @Override
+    public String toString() {
+        return "ClaimDTO{" +
+                "claimId=" + claimId +
+                ", claimNumber=" + claimNumber +
+                ", claimAccidentDate=" + claimAccidentDate +
+                ", claimCreationDate=" + claimCreationDate +
+                ", claimStatus=" + claimStatus +
+                ", contractId=" + contractId +
+                ", contractNumber=" + contractNumber +
+                ", contractStartDate=" + contractStartDate +
+                ", contractEndDate=" + contractEndDate +
+                ", contractAssuredName='" + contractAssuredName + '\'' +
+                ", contractVehicleImmat=" + contractVehicleImmat +
+                '}';
+    }
 }

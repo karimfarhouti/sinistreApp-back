@@ -11,25 +11,27 @@ import java.util.Objects;
 public class Contract {
 
     @Id
-    @Column(name = "number")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "myGenerator")
+    @SequenceGenerator(name = "myGenerator", sequenceName = "mySequence")
+    private Long id;
+    @Column(name = "number", unique = true)
     private Long number;
-
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
-
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
-
     @Column(name = "assured_name", nullable = false)
     private String assuredName;
-
     @Column(name = "vehicle_immat", nullable = false)
     private Long vehicleImmat;
-
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "claim_number", referencedColumnName = "number")
+    @JoinColumn(name = "claim_id", referencedColumnName = "id")
     @JsonIgnore
     private Claim claim;
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public Long getNumber() { return number; }
 
@@ -47,7 +49,7 @@ public class Contract {
 
     public void setAssuredName(String assuredName) { this.assuredName = assuredName; }
 
-    public Long getVehicleImmatriculation() { return vehicleImmat; }
+    public Long getVehicleImmat() { return vehicleImmat; }
 
     public void setVehicleImmat(Long vehicleImmat) { this.vehicleImmat = vehicleImmat; }
 
@@ -60,11 +62,11 @@ public class Contract {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contract contract = (Contract) o;
-        return number.equals(contract.number);
+        return id != null && id.equals(contract.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(number);
+        return 31;
     }
 }

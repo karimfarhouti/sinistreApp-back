@@ -11,12 +11,14 @@ public class ClaimMapper implements EntityMapper<Claim, ClaimDTO> {
     @Override
     public Claim toEntity(ClaimDTO dto) {
         final Claim claim = new Claim();
+        claim.setId(dto.getClaimId());
         claim.setNumber(dto.getClaimNumber());
         claim.setAccidentDate(dto.getClaimAccidentDate());
         claim.setCreationDate(dto.getClaimCreationDate());
         claim.setStatus(dto.getClaimStatus());
 
         final Contract contract = new Contract();
+        contract.setId(dto.getContractId());
         contract.setNumber(dto.getContractNumber());
         contract.setAssuredName(dto.getContractAssuredName());
         contract.setEndDate(dto.getContractEndDate());

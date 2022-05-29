@@ -5,8 +5,10 @@ import com.avidea.sinistreapp.domain.Claim;
 import com.avidea.sinistreapp.domain.Contract;
 import com.avidea.sinistreapp.repositories.ClaimRepository;
 import com.avidea.sinistreapp.repositories.ContractRepository;
+import com.avidea.sinistreapp.services.ClaimService;
 import com.avidea.sinistreapp.services.dtos.ClaimDTO;
 import com.avidea.sinistreapp.services.mapper.ClaimMapper;
+import com.avidea.sinistreapp.web.rest.exceptions.ClaimFileDoesNotExistException;
 import com.avidea.sinistreapp.web.rest.exceptions.ClaimNotFoundException;
 import com.avidea.sinistreapp.web.rest.exceptions.ClaimNumberAlreadyExistsException;
 import com.avidea.sinistreapp.web.rest.exceptions.ContractNumberAlreadyExistsException;
@@ -14,9 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -30,17 +32,19 @@ public class ClaimResource {
     private final ClaimRepository claimRepository;
     private final ContractRepository contractRepository;
 
+    private final ClaimService claimService;
     private final ClaimMapper claimMapper;
 
-    public ClaimResource(ClaimRepository claimRepository, ContractRepository contractRepository, ClaimMapper claimMapper) {
+    public ClaimResource(ClaimRepository claimRepository, ContractRepository contractRepository, ClaimService claimService, ClaimMapper claimMapper) {
         this.claimRepository = claimRepository;
         this.contractRepository = contractRepository;
+        this.claimService = claimService;
         this.claimMapper = claimMapper;
     }
 
 
     @PostMapping("/claims")
-    public ResponseEntity<Claim> createClaim(@Valid @RequestBody ClaimDTO claimDTO) {
+    public ResponseEntity<Claim> createClaim(@RequestBody @Valid ClaimDTO claimDTO) {
 
         final Long claimNumber = claimDTO.getClaimNumber();
 
@@ -60,19 +64,51 @@ public class ClaimResource {
     }
 
     @PutMapping("/claims")
-    public ResponseEntity<Claim> updateClaim(@Valid @RequestBody ClaimDTO claimDTO) {
+    public ResponseEntity<Claim> updateClaim(@RequestBody @Valid ClaimDTO claimDTO) {
         log.debug("ClaimDTO object received: {}", claimDTO);
         final Claim claim = claimRepository.save(claimMapper.toEntity(claimDTO));
         return ResponseEntity.ok().body(claim);
     }
 
     @DeleteMapping("/claims/{claimId}")
-    public ResponseEntity<Void> deleteClaim(@NotNull @PathVariable Long claimId) {
+    public ResponseEntity<Void> deleteClaim(@PathVariable Long claimId) {
         final Optional<Claim> maybeClaim = claimRepository.findById(claimId);
         if (!maybeClaim.isPresent())
             throw new ClaimNotFoundException("Claim with id: " + claimId + " was not found");
-        claimRepository.delete(maybeClaim.get());
+        claimService.delete(maybeClaim.get());
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/claim/{claimId}/image")
+    public ResponseEntity<Claim> updateClaimImage(@PathVariable Long claimId, @RequestParam("claimImage") MultipartFile file) {
+        final Optional<Claim> maybeClaim = claimRepository.findById(claimId);
+        if (!maybeClaim.isPresent())
+            throw new ClaimNotFoundException("Claim with number " + claimId + " does not exist");
+        final Claim claim = maybeClaim.get();
+        if (claim.getImageUrl() == null || claim.getImageUrl().isEmpty())
+            throw new ClaimFileDoesNotExistException("No file associated with claim number: " + claim.getNumber());
+        try {
+            claimService.updateClaimFile(claim, file);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok().body(claim);
+    }
+
+    @DeleteMapping("/claim/{claimId}/image")
+    public ResponseEntity<Claim> deleteClaimImage(@PathVariable Long claimId) {
+        final Optional<Claim> maybeClaim = claimRepository.findById(claimId);
+        if (!maybeClaim.isPresent())
+            throw new ClaimNotFoundException("Claim with number " + claimId + " does not exist");
+        final Claim claim = maybeClaim.get();
+        if (claim.getImageUrl() == null || claim.getImageUrl().isEmpty())
+            throw new ClaimFileDoesNotExistException("No file associated with claim number: " + claim.getNumber());
+        try {
+            claimService.deleteClaimFile(claim);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok().body(claim);
     }
 
     @GetMapping("/claims")
@@ -81,7 +117,7 @@ public class ClaimResource {
     }
 
     @GetMapping("/claim/{claimId}")
-    public ResponseEntity<Claim> getByNumber(@NotNull @PathVariable Long claimId) {
+    public ResponseEntity<Claim> getByNumber(@PathVariable Long claimId) {
         final Optional<Claim> maybeClaim = claimRepository.findById(claimId);
         return maybeClaim.map(claim -> ResponseEntity.ok().body(claim)).orElseGet(() -> ResponseEntity.notFound().build());
     }

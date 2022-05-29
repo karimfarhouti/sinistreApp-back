@@ -37,4 +37,9 @@ public class ExceptionHandlingController {
     public ResponseEntity<Object> handleWrongFileExtensionException(WrongFileExtensionException ex, WebRequest request) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @ExceptionHandler(ClaimFileDoesNotExistException.class)
+    public ResponseEntity<Object> handleClaimFileDoesNotExistException(ClaimFileDoesNotExistException ex, WebRequest request) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }

@@ -16,6 +16,7 @@ public class ClaimMapper implements EntityMapper<Claim, ClaimDTO> {
         claim.setAccidentDate(dto.getClaimAccidentDate());
         claim.setCreationDate(dto.getClaimCreationDate());
         claim.setStatus(dto.getClaimStatus());
+        claim.setImageUrl(dto.getClaimImageUrl());
 
         final Contract contract = new Contract();
         contract.setId(dto.getContractId());

@@ -2,43 +2,47 @@ package com.avidea.sinistreapp.services.dtos;
 
 import com.avidea.sinistreapp.domain.enums.ClaimStatus;
 
-import javax.validation.constraints.*;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class ClaimDTO {
-
+    @Nullable
     private Long claimId;
-    @NotNull(message = "can't be null")
+    @NotNull
     private Long claimNumber;
 
-    @NotNull(message = "can't be null")
+    @NotNull
     private LocalDate claimAccidentDate;
 
-    @NotNull(message = "can't be null")
+    @NotNull
     private LocalDate claimCreationDate;
 
-    @NotNull(message = "can't be null")
+    @NotNull
     private ClaimStatus claimStatus;
 
-    @NotBlank(message = "can't be null")
+    @Nullable
     private String claimImageUrl;
 
+    @Nullable
     private Long contractId;
-    @NotNull(message = "can't be null")
+    @NotNull
     private Long contractNumber;
 
-    @NotNull(message = "can't be null")
+    @NotNull
     private LocalDate contractStartDate;
 
-    @NotNull(message = "can't be null")
+    @NotNull
     private LocalDate contractEndDate;
 
-    @NotBlank(message = "can't be null")
-    @Min(3)
-    @Max(50)
+    @NotBlank
+    @Size(min = 3, max = 50)
     private String contractAssuredName;
 
-    @NotNull(message = "can't be null")
+    @NotNull
+    @Size(min = 3, max = 50)
     private Long contractVehicleImmat;
 
     public Long getClaimId() { return claimId; }

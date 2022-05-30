@@ -14,16 +14,22 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "myGenerator")
     @SequenceGenerator(name = "myGenerator", sequenceName = "mySequence")
     private Long id;
+
     @Column(name = "number", unique = true)
     private Long number;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
+
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
+
     @Column(name = "assured_name", nullable = false)
     private String assuredName;
+
     @Column(name = "vehicle_immat", nullable = false)
     private Long vehicleImmat;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "claim_id", referencedColumnName = "id")
     @JsonIgnore

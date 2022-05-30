@@ -4,7 +4,6 @@ import com.avidea.sinistreapp.domain.enums.ClaimStatus;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name = "claim")

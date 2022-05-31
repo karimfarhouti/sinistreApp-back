@@ -50,13 +50,14 @@ public class ClaimResource {
 
         log.debug("claim number: {}", claimNumber);
 
-        final Optional<Claim> maybeClaim = claimRepository.findById(claimNumber);
+        final Optional<Claim> maybeClaim = claimRepository.findByNumber(claimNumber);
         if (maybeClaim.isPresent())
-            throw new ClaimNumberAlreadyExistsException("Claim with number " + claimNumber + " already exists");
+            throw new ClaimNumberAlreadyExistsException("claim with number " + claimNumber + " already exists");
+
         final Long contractNumber = claimDTO.getContractNumber();
-        final Optional<Contract> maybeContract = contractRepository.findById(contractNumber);
+        final Optional<Contract> maybeContract = contractRepository.findByNumber(contractNumber);
         if (maybeContract.isPresent())
-            throw new ContractNumberAlreadyExistsException("Contract with number " + contractNumber + " already exists");
+            throw new ContractNumberAlreadyExistsException("contract with number " + contractNumber + " already exists");
 
         final Claim claim = claimRepository.save(claimMapper.toEntity(claimDTO));
 
@@ -66,7 +67,24 @@ public class ClaimResource {
     @PutMapping("/claims")
     public ResponseEntity<Claim> updateClaim(@RequestBody @Valid ClaimDTO claimDTO) {
         log.debug("ClaimDTO object received: {}", claimDTO);
-        final Claim claim = claimRepository.save(claimMapper.toEntity(claimDTO));
+        final Long claimId = claimDTO.getClaimId();
+        final Optional<Claim> maybeClaim = claimRepository.findById(claimId);
+
+        if (!maybeClaim.isPresent())
+            return ResponseEntity.badRequest().build();
+
+        final Claim claim = maybeClaim.get();
+        final Long claimNumber = claimDTO.getClaimNumber();
+        final Optional<Claim> maybeClaimByNumber = claimRepository.findByNumber(claimNumber);
+        if (maybeClaimByNumber.isPresent() && !maybeClaimByNumber.get().equals(claim))
+            throw new ClaimNumberAlreadyExistsException("claim with number " + claimNumber + " already exist");
+
+        final Long contractNumber = claimDTO.getContractNumber();
+        final Optional<Contract> maybeContract = contractRepository.findByNumber(contractNumber);
+        if (maybeContract.isPresent() && !maybeContract.get().equals(claim.getContract()))
+            throw new ContractNumberAlreadyExistsException("contract with number " + contractNumber + " already exists");
+
+        claimRepository.save(claimMapper.toEntity(claimDTO));
         return ResponseEntity.ok().body(claim);
     }
 
@@ -75,6 +93,7 @@ public class ClaimResource {
         final Optional<Claim> maybeClaim = claimRepository.findById(claimId);
         if (!maybeClaim.isPresent())
             throw new ClaimNotFoundException("Claim with id: " + claimId + " was not found");
+
         claimService.delete(maybeClaim.get());
         return ResponseEntity.ok().build();
     }

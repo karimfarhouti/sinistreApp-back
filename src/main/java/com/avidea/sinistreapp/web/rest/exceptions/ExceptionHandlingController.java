@@ -42,4 +42,9 @@ public class ExceptionHandlingController {
     public ResponseEntity<Object> handleClaimFileDoesNotExistException(ClaimFileDoesNotExistException ex, WebRequest request) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @ExceptionHandler(AuthenticationFailureException.class)
+    public ResponseEntity<Object> handleAuthenticationFailureException(AuthenticationFailureException ex, WebRequest request) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }

@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:4200")
 public class ClaimResource {
 
     private static final Logger log = LoggerFactory.getLogger(ClaimResource.class);

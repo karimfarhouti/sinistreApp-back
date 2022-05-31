@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:4200")
 public class FileStorageResource {
 
     private static final Logger log = LoggerFactory.getLogger(FileStorageResource.class);

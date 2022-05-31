@@ -41,9 +41,9 @@ public class ClaimDTO {
     @Size(min = 3, max = 50)
     private String contractAssuredName;
 
-    @NotNull
+    @NotBlank
     @Size(min = 3, max = 50)
-    private Long contractVehicleImmat;
+    private String contractVehicleImmat;
 
     public Long getClaimId() { return claimId; }
 
@@ -89,9 +89,9 @@ public class ClaimDTO {
 
     public void setContractAssuredName(String contractAssuredName) { this.contractAssuredName = contractAssuredName; }
 
-    public Long getContractVehicleImmat() { return contractVehicleImmat; }
+    public String getContractVehicleImmat() { return contractVehicleImmat; }
 
-    public void setContractVehicleImmat(Long contractVehicleImmat) { this.contractVehicleImmat = contractVehicleImmat; }
+    public void setContractVehicleImmat(String contractVehicleImmat) { this.contractVehicleImmat = contractVehicleImmat; }
 
     @Override
     public String toString() {

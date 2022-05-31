@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name = "contract")
@@ -28,7 +27,7 @@ public class Contract {
     private String assuredName;
 
     @Column(name = "vehicle_immat", nullable = false)
-    private Long vehicleImmat;
+    private String vehicleImmat;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "claim_id", referencedColumnName = "id")
@@ -55,9 +54,9 @@ public class Contract {
 
     public void setAssuredName(String assuredName) { this.assuredName = assuredName; }
 
-    public Long getVehicleImmat() { return vehicleImmat; }
+    public String getVehicleImmat() { return vehicleImmat; }
 
-    public void setVehicleImmat(Long vehicleImmat) { this.vehicleImmat = vehicleImmat; }
+    public void setVehicleImmat(String vehicleImmat) { this.vehicleImmat = vehicleImmat; }
 
     public Claim getClaim() { return claim; }
 

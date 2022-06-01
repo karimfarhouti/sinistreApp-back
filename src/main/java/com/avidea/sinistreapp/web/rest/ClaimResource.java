@@ -83,7 +83,7 @@ public class ClaimResource {
         final Optional<Contract> maybeContract = contractRepository.findByNumber(contractNumber);
         if (maybeContract.isPresent() && !maybeContract.get().equals(claim.getContract()))
             throw new ContractNumberAlreadyExistsException("contract with number " + contractNumber + " already exists");
-
+        claimDTO.setClaimImageUrl(claim.getImageUrl());
         claimRepository.save(claimMapper.toEntity(claimDTO));
         return ResponseEntity.ok().body(claim);
     }
@@ -107,6 +107,7 @@ public class ClaimResource {
         if (claim.getImageUrl() == null || claim.getImageUrl().isEmpty())
             throw new ClaimFileDoesNotExistException("No file associated with claim number: " + claim.getNumber());
         try {
+            log.debug("claim imageUrl: {}", claim.getImageUrl());
             claimService.updateClaimFile(claim, file);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

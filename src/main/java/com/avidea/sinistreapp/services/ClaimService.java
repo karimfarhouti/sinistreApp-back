@@ -49,10 +49,11 @@ public class ClaimService {
 
     @Transactional(rollbackFor = Exception.class)
     public void updateClaimFile(Claim claim, MultipartFile file) throws Exception {
-        log.debug("update claim file method called with id:{}", claim.getId());
+        log.debug("update claim file method called with claimId:{}", claim.getId());
         final String oldImageUrl = claim.getImageUrl();
         final String imageUrl = file.getOriginalFilename();
-        log.debug("oldImageUrl:{}", oldImageUrl);
+        log.debug("old imageUrl:{}", oldImageUrl);
+        log.debug("new imageUrl: {}", imageUrl);
         if (oldImageUrl != null && !oldImageUrl.isEmpty())
             fileUploadService.deleteFile(oldImageUrl);
 
